@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview - AI Mock Interview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">AI <span>Mock</span> Interview</div>
+    </nav>
+
+    <div class="interview-container">
+
+        <div class="interview-header">
+            <div class="role-info">
+                <h3>MERN Stack Developer</h3>
+                <p>Medium Difficulty</p>
+            </div>
+            <div class="timer">⏱ 60s</div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-number">Question 1 of 5</div>
+            <div class="question-text">Your question will appear here...</div>
+        </div>
+
+        <div class="answer-card">
+            <h3>Your Answer</h3>
+            <textarea placeholder="Type your answer here or use voice input..."></textarea>
+            <div class="answer-buttons">
+                <button class="btn-voice">🎤 Speak Answer</button>
+                <button class="btn-primary">Submit Answer</button>
+                <button class="btn-next">Next Question →</button>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <p>Question Progress: 1 / 5</p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+
+    // ===== ROLE & DIFFICULTY =====
+    let role = localStorage.getItem('selectedRole');
+    let difficulty = localStorage.getItem('selectedDifficulty');
+
+    const roleNames = {
+        'mern': 'MERN Stack Developer',
+        'java': 'Java Developer',
+        'python': 'Python Developer',
+        'data': 'Data Analyst',
+        'frontend': 'Frontend Developer'
+    };
+
+    const difficultyNames = {
+        'easy': 'Easy',
+        'medium': 'Medium',
+        'hard': 'Hard'
+    };
+
+    document.querySelector('.role-info h3').textContent = roleNames[role];
+    document.querySelector('.role-info p').textContent = difficultyNames[difficulty] + ' Difficulty';
+
+
+    // ===== TIMER =====
+    let timeLeft = 60;
+    let timer;
+    const timerElement = document.querySelector('.timer');
+
+    function startTimer() {
+        clearInterval(timer);
+        timeLeft = 60;
+        timerElement.textContent = '⏱ 60s';
+
+        timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = '⏱ ' + timeLeft + 's';
+
+            if(timeLeft === 0) {
+                clearInterval(timer);
+                alert('Time Up! Moving to next question...');
+                goToNextQuestion();
+            }
+        }, 1000);
+    }
+
+    // Start timer immediately
+    startTimer();
+
+
+    // ===== QUESTIONS =====
+    const questions = {
+        'mern': [
+            'What is the MERN Stack?',
+            'What is React and why is it used?',
+            'What is Node.js and how does it work?',
+            'What is MongoDB and how is it different from SQL?',
+            'What is Express.js and what is it used for?'
+        ],
+        'java': [
+            'What is Java and what are its features?',
+            'What is OOP and its 4 pillars?',
+            'What is the difference between JDK, JRE and JVM?',
+            'What is inheritance in Java?',
+            'What is the difference between ArrayList and LinkedList?'
+        ],
+        'python': [
+            'What is Python and why is it popular?',
+            'What is the difference between list and tuple?',
+            'What are decorators in Python?',
+            'What is a lambda function?',
+            'What is the difference between deepcopy and shallowcopy?'
+        ],
+        'data': [
+            'What is Data Analysis?',
+            'What is the difference between SQL and NoSQL?',
+            'What is a pivot table?',
+            'What is the difference between mean, median and mode?',
+            'What is data cleaning and why is it important?'
+        ],
+        'frontend': [
+            'What is the difference between HTML, CSS and JavaScript?',
+            'What is responsive design?',
+            'What is the difference between flexbox and grid?',
+            'What is the DOM?',
+            'What is the difference between localStorage and sessionStorage?'
+        ]
+    };
+
+    let currentQuestions = questions[role] || questions['mern'];
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+
+    const questionText = document.querySelector('.question-text');
+    const questionNumber = document.querySelector('.question-number');
+
+
+    // ===== SHOW QUESTION =====
+    function showQuestion() {
+        questionNumber.textContent = 'Question ' + (currentQuestionIndex + 1) + ' of ' + currentQuestions.length;
+        questionText.textContent = currentQuestions[currentQuestionIndex];
+
+        // Update progress bar
+        let progress = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+        document.querySelector('.progress-fill').style.width = progress + '%';
+        document.querySelector('.progress-section p').textContent =
+            'Question Progress: ' + (currentQuestionIndex + 1) + ' / ' + currentQuestions.length;
+
+        // Clear textarea
+        document.querySelector('textarea').value = '';
+    }
+
+    // Show first question
+    showQuestion();
+
+
+    // ===== GO TO NEXT QUESTION =====
+    function goToNextQuestion() {
+        if(currentQuestionIndex < currentQuestions.length - 1) {
+            currentQuestionIndex++;
+            showQuestion();
+            startTimer();
+        } else {
+            // Save results to localStorage
+            localStorage.setItem('totalQuestions', currentQuestions.length);
+            localStorage.setItem('userAnswers', JSON.stringify(userAnswers));
+            localStorage.setItem('interviewRole', roleNames[role]);
+            localStorage.setItem('interviewDifficulty', difficultyNames[difficulty]);
+
+            clearInterval(timer);
+            alert('Interview Complete! Redirecting to feedback...');
+            window.location.href = 'feedback.html';
+        }
+    }
+
+
+    // ===== SUBMIT ANSWER BUTTON =====
+    document.querySelector('.btn-primary').addEventListener('click', () => {
+        let answer = document.querySelector('textarea').value;
+
+        if(answer === '') {
+            alert('Please type or speak your answer first!');
+            return;
+        }
+
+        // Save answer
+        userAnswers.push({
+            question: currentQuestions[currentQuestionIndex],
+            answer: answer
+        });
+
+        alert('Answer submitted! ✅');
+    });
+
+
+    // ===== NEXT QUESTION BUTTON =====
+    document.querySelector('.btn-next').addEventListener('click', () => {
+        goToNextQuestion();
+    });
+
+
+    // ===== VOICE INPUT =====
+    const voiceBtn = document.querySelector('.btn-voice');
+    const textarea = document.querySelector('textarea');
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+
+    voiceBtn.addEventListener('click', () => {
+        recognition.start();
+        voiceBtn.textContent = '🔴 Listening...';
+    });
+
+    recognition.onresult = (event) => {
+        let transcript = event.results[0][0].transcript;
+        textarea.value = transcript;
+        voiceBtn.textContent = '🎤 Speak Answer';
+    };
+
+    recognition.onerror = (event) => {
+        alert('Voice error: ' + event.error);
+        voiceBtn.textContent = '🎤 Speak Answer';
+    };
+
+    recognition.onend = () => {
+        voiceBtn.textContent = '🎤 Speak Answer';
+    };
+
+</script>
+</body>
+</html>

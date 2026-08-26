@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Role - AI Mock Interview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">AI <span>Mock</span> Interview</div>
+    </nav>
+
+    <div class="select-container">
+        <div class="select-card">
+            <h2>Select Role & Difficulty 🎯</h2>
+            <p class="subtitle">Choose your role and difficulty to start your AI interview</p>
+
+            <form>
+                <div class="form-group">
+                    <label>Choose Interview Role</label>
+                    <select name="role">
+                        <option value="">-- Select Role --</option>
+                        <option value="mern">MERN Stack Developer</option>
+                        <option value="java">Java Developer</option>
+                        <option value="python">Python Developer</option>
+                        <option value="data">Data Analyst</option>
+                        <option value="frontend">Frontend Developer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Choose Difficulty</label>
+                    <select name="difficulty">
+                        <option value="">-- Select Difficulty --</option>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%">
+                 Start Interview 🚀
+                  </button>
+            </form>
+
+            <div style="text-align:center;margin-top:16px">
+                <a href="index.html" class="back-link">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+<script>
+    const form = document.querySelector('form');
+    const roleSelect = document.querySelector('select[name="role"]');
+    const difficultySelect = document.querySelector('select[name="difficulty"]');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        let role = roleSelect.value;
+        let difficulty = difficultySelect.value;
+
+        // Validate
+        if(role === '') {
+            alert('Please select a role!');
+            return;
+        }
+
+        if(difficulty === '') {
+            alert('Please select difficulty!');
+            return;
+        }
+
+        // Save to localStorage
+        localStorage.setItem('selectedRole', role);
+        localStorage.setItem('selectedDifficulty', difficulty);
+
+        // Go to interview page
+        window.location.href = 'interview.html';
+    });
+</script>
+</body>
+</html>

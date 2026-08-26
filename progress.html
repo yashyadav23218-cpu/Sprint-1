@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress - AI Mock Interview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">AI <span>Mock</span> Interview</div>
+    </nav>
+
+    <div class="progress-container">
+        <h2>Your Progress 📈</h2>
+        <p class="subtitle" style="margin-bottom:28px">Track your interview performance over time</p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Total Interviews</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Average Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Best Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">-</div>
+                <div class="stat-label">Top Role</div>
+            </div>
+        </div>
+
+        <div class="history-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Role</th>
+                        <th>Difficulty</th>
+                        <th>Score</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JS will fill this -->
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display:flex;gap:12px">
+            <a href="select-role.html">
+                <button class="btn-primary">Start New Interview</button>
+            </a>
+            <a href="index.html">
+                <button class="btn-outline">Go Home</button>
+            </a>
+        </div>
+
+    </div>
+
+<script>
+    // ===== GET HISTORY FROM LOCALSTORAGE =====
+    let history = JSON.parse(localStorage.getItem('interviewHistory')) || [];
+
+    // ===== UPDATE STATS =====
+    const statCards = document.querySelectorAll('.stat-card .stat-number');
+
+    // Total interviews
+    statCards[0].textContent = history.length;
+
+    if(history.length > 0) {
+
+        // Average score
+        let totalScore = 0;
+        history.forEach(item => {
+            totalScore += parseInt(item.score);
+        });
+        let avgScore = (totalScore / history.length).toFixed(1);
+        statCards[1].textContent = avgScore;
+
+        // Best score
+        let bestScore = Math.max(...history.map(item => parseInt(item.score)));
+        statCards[2].textContent = bestScore;
+
+        // Most practiced role
+        let roles = history.map(item => item.role);
+        let mostPracticed = roles.sort((a,b) =>
+            roles.filter(r => r===a).length - roles.filter(r => r===b).length
+        ).pop();
+        statCards[3].textContent = mostPracticed
+            ? mostPracticed.split(' ')[0]
+            : '-';
+
+    }
+
+    // ===== UPDATE TABLE =====
+    const tableBody = document.querySelector('.history-table tbody');
+
+    if(history.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="5"
+                style="text-align:center;color:#64748b;padding:24px;font-size:14px">
+                    No interviews yet! Start your first interview 🚀
+                </td>
+            </tr>
+        `;
+    } else {
+        let rowsHTML = '';
+
+        // Show latest first
+        let reversedHistory = [...history].reverse();
+
+        reversedHistory.forEach(item => {
+            let resultClass =
+                item.result === 'Excellent' || item.result === 'Good'
+                ? 'result-good'
+                : item.result === 'Average'
+                ? 'result-avg'
+                : 'result-bad';
+
+            rowsHTML += `
+                <tr>
+                    <td>${item.date}</td>
+                    <td>${item.role}</td>
+                    <td>${item.difficulty}</td>
+                    <td>${item.score}</td>
+                    <td class="${resultClass}">${item.result}</td>
+                </tr>
+            `;
+        });
+
+        tableBody.innerHTML = rowsHTML;
+    }
+
+    // ===== CLEAR HISTORY BUTTON =====
+    // Uncomment below if you want a clear button later
+    // localStorage.removeItem('interviewHistory');
+
+</script>
+</body>
+</html>
