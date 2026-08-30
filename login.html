@@ -36,42 +36,40 @@
             <div style="text-align:center;margin-top:10px">
                 <a href="index.html" class="back-link">← Back to Home</a>
             </div>
+
         </div>
     </div>
-     <script>
-    // Select the form
-    const form = document.querySelector('form');
-    const emailInput = document.querySelector('input[type="email"]');
-    const passwordInput = document.querySelector('input[type="password"]');
 
-    // Listen for form submit
-    form.addEventListener('submit', (e) => {
-        e.preventDefault(); // stop page reload
+    <script>
+        const form = document.querySelector('form');
+        const emailInput = document.querySelector('input[type="email"]');
+        const passwordInput = document.querySelector('input[type="password"]');
 
-        // Get values
-        let email = emailInput.value;
-        let password = passwordInput.value;
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-        // Validate
-        if(email === '') {
-            alert('Please enter your email!');
-            return;
-        }
+            let email = emailInput.value;
+            let password = passwordInput.value;
 
-        if(password === '') {
-            alert('Please enter your password!');
-            return;
-        }
+            if(email === '') {
+                alert('Please enter your email!');
+                return;
+            }
 
-        if(password.length < 6) {
-            alert('Password must be at least 6 characters!');
-            return;
-        }
+            if(password === '') {
+                alert('Please enter your password!');
+                return;
+            }
 
-        // If all good — go to select role page
-        alert('Login Successful!');
-        window.location.href = 'select-role.html';
-    });
-</script>
+            if(password.length < 6) {
+                alert('Password must be at least 6 characters!');
+                return;
+            }
+
+            alert('Login Successful!');
+            window.location.href = 'select-role.html';
+        });
+    </script>
+
 </body>
 </html>
