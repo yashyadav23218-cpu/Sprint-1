@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - AI Mock Interview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">AI <span>Mock</span> Interview</div>
+    </nav>
+
+    <div class="feedback-container">
+        <h2>Interview Feedback 📊</h2>
+        <p class="subtitle">Here is your detailed AI feedback</p>
+
+        <div class="score-card">
+            <div class="score-number">8/10</div>
+            <div class="score-label">Great performance! Keep it up! 🔥</div>
+        </div>
+
+        <div class="feedback-card">
+            <h3>✅ What was good</h3>
+            <div class="feedback-item"><div class="dot-good"></div>Good explanation of concepts</div>
+            <div class="feedback-item"><div class="dot-good"></div>Clear and structured answer</div>
+            <div class="feedback-item"><div class="dot-good"></div>Used correct technical terms</div>
+        </div>
+
+        <div class="feedback-card">
+            <h3>❌ What was missing</h3>
+            <div class="feedback-item"><div class="dot-bad"></div>Could have given more examples</div>
+            <div class="feedback-item"><div class="dot-bad"></div>Missing some edge cases</div>
+        </div>
+
+        <div class="feedback-card">
+            <h3>💡 Ideal Answer</h3>
+            <div class="ideal-answer">
+                The ideal answer will appear here once AI evaluates your response...
+            </div>
+        </div>
+
+        <div class="feedback-buttons">
+            <a href="select-role.html"><button class="btn-primary">Try Again</button></a>
+            <a href="progress.html"><button class="btn-outline">View Progress</button></a>
+            <a href="index.html"><button class="btn-outline">Go Home</button></a>
+        </div>
+    </div>
+<script>
+    // ===== GET DATA FROM LOCALSTORAGE =====
+    let role = localStorage.getItem('interviewRole');
+    let difficulty = localStorage.getItem('interviewDifficulty');
+    let userAnswers = JSON.parse(localStorage.getItem('userAnswers')) || [];
+    let totalQuestions = localStorage.getItem('totalQuestions');
+
+    // ===== CALCULATE SCORE =====
+    function calculateScore(answers) {
+        let score = 0;
+        answers.forEach(item => {
+            let wordCount = item.answer.split(' ').length;
+            if(wordCount >= 20) {
+                score += 2; // detailed answer
+            } else if(wordCount >= 10) {
+                score += 1; // basic answer
+            }
+        });
+
+        // Max score = totalQuestions * 2
+        let maxScore = totalQuestions * 2;
+        let percentage = Math.round((score / maxScore) * 10);
+
+        // Keep between 1 and 10
+        return Math.min(10, Math.max(1, percentage));
+    }
+
+    let finalScore = calculateScore(userAnswers);
+
+    // ===== SHOW SCORE =====
+    document.querySelector('.score-number').textContent = finalScore + '/10';
+
+    // ===== SHOW PERFORMANCE MESSAGE =====
+    let message = '';
+    if(finalScore >= 8) {
+        message = 'Excellent performance! You are interview ready! 🔥';
+    } else if(finalScore >= 6) {
+        message = 'Good performance! Keep practicing! 😊';
+    } else if(finalScore >= 4) {
+        message = 'Average performance! More practice needed! 💪';
+    } else {
+        message = 'Keep trying! Practice makes perfect! 🚀';
+    }
+    document.querySelector('.score-label').textContent = message;
+
+    // ===== SHOW ROLE & DIFFICULTY =====
+    document.querySelector('.feedback-container h2').textContent
+        = 'Interview Feedback 📊';
+    document.querySelector('.feedback-container .subtitle').textContent
+        = role + ' | ' + difficulty + ' Difficulty';
+
+    // ===== SHOW ANSWERS =====
+    const feedbackCard = document.querySelector('.feedback-card');
+    let answersHTML = '';
+
+    userAnswers.forEach((item, index) => {
+        answersHTML += `
+            <div class="feedback-item">
+                <div class="dot-good"></div>
+                <div>
+                    <strong>Q${index + 1}: ${item.question}</strong>
+                    <br>
+                    <span>Your Answer: ${item.answer || 'No answer given'}</span>
+                </div>
+            </div>
+        `;
+    });
+
+    feedbackCard.innerHTML = '<h3>✅ Your Answers</h3>' + answersHTML;
+
+    // ===== SAVE TO PROGRESS =====
+    let today = new Date();
+    let date = today.getDate() + '-' + (today.getMonth()+1) + '-' + today.getFullYear();
+
+    let result = {
+        date: date,
+        role: role,
+        difficulty: difficulty,
+        score: finalScore + '/10',
+        result: finalScore >= 8 ? 'Excellent' : finalScore >= 6 ? 'Good' : finalScore >= 4 ? 'Average' : 'Poor'
+    };
+
+    // Get existing history
+    let history = JSON.parse(localStorage.getItem('interviewHistory')) || [];
+    history.push(result);
+    localStorage.setItem('interviewHistory', JSON.stringify(history));
+
+</script>
+</body>
+</html>

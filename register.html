@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - AI Mock Interview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">AI <span>Mock</span> Interview</div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Create Account 🚀</h2>
+            <p class="subtitle">Join thousands of students practicing with AI</p>
+
+            <form>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="Example@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" placeholder="Confirm your password">
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%">Create Account</button>
+            </form>
+
+            <div class="auth-link">
+                Already have an account? <a href="login.html">Login here</a>
+            </div>
+            <div style="text-align:center;margin-top:10px">
+                <a href="index.html" class="back-link">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+<script>
+    const form = document.querySelector('form');
+    const nameInput = document.querySelector('input[type="text"]');
+    const emailInput = document.querySelector('input[type="email"]');
+    const passwordInputs = document.querySelectorAll('input[type="password"]');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        let name = nameInput.value;
+        let email = emailInput.value;
+        let password = passwordInputs[0].value;
+        let confirmPassword = passwordInputs[1].value;
+
+        if(name === '') {
+            alert('Please enter your name!');
+            return;
+        }
+
+        if(email === '') {
+            alert('Please enter your email!');
+            return;
+        }
+
+        if(password === '') {
+            alert('Please enter a password!');
+            return;
+        }
+
+        if(password.length < 6) {
+            alert('Password must be at least 6 characters!');
+            return;
+        }
+
+        if(password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+
+        // Save user name in localStorage
+        localStorage.setItem('userName', name);
+
+        // Registration successful
+        alert('Account Created Successfully!');
+        window.location.href = 'select-role.html';
+    });
+</script>
+</body>
+</html>
