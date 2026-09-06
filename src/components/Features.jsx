@@ -30,7 +30,7 @@ function Features() {
 
       <div className="features-grid">
         {features.map((feature) => (
-          <div className="feature-card">
+          <div className="feature-card" key={feature.title}>
             <div className="feature-icon">{feature.icon}</div>
 
             <h3>{feature.title}</h3>
