@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-function Login() {
+
+function Register() {
   return (
     <>
       <nav className="navbar">
@@ -10,13 +11,22 @@ function Login() {
 
       <div className="auth-container">
         <div className="auth-card">
-          <h2>Welcome Back! 👋</h2>
+          <h2>Create Account 🚀</h2>
 
           <p className="subtitle">
-            Login to continue your interview practice
+            Join thousands of students practicing with AI
           </p>
 
           <form>
+            <div className="form-group">
+              <label>Full Name</label>
+
+              <input
+                type="text"
+                placeholder="Enter your name"
+              />
+            </div>
+
             <div className="form-group">
               <label>Email Address</label>
 
@@ -31,7 +41,16 @@ function Login() {
 
               <input
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Create a password"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Confirm Password</label>
+
+              <input
+                type="password"
+                placeholder="Confirm your password"
               />
             </div>
 
@@ -40,19 +59,19 @@ function Login() {
               className="btn-primary"
               style={{ width: "100%" }}
             >
-              Login
+              Create Account
             </button>
           </form>
 
           <div className="auth-link">
-            Don't have an account?{" "}
-            <Link to="/register">Register here</Link>
+            Already have an account?{" "}
+            <Link to="/login">Login here</Link>
           </div>
 
           <div style={{ textAlign: "center", marginTop: "10px" }}>
             <Link to="/" className="back-link">
-            ← Back to Home
-             </Link>
+              ← Back to Home
+            </Link>
           </div>
         </div>
       </div>
@@ -60,4 +79,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
