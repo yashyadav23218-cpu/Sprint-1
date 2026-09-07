@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Roles() {
   const roles = [
     "MERN Stack Developer",
@@ -20,12 +22,12 @@ function Roles() {
       </div>
 
       <div style={{ textAlign: "center" }}>
-        <button className="btn-primary">
+        <Link to="/register" className="btn-primary">
           Get Started Free
-        </button>
+        </Link>
       </div>
     </section>
   );
 }
 
-export default Roles;
+export default Roles;

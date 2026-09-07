@@ -1,16 +1,22 @@
+import { Link } from "react-router-dom";
+
 function Navbar() {
   return (
     <nav className="navbar">
-      <div className="logo">
+      <Link to="/" className="logo">
         AI <span>Mock</span> Interview
-      </div>
+      </Link>
 
       <div className="navbar-buttons">
-        <button className="btn-outline">Login</button>
-        <button className="btn-primary">Get Started</button>
+        <Link to="/login" className="btn-outline">
+          Login
+        </Link>
+        <Link to="/register" className="btn-primary">
+          Get Started
+        </Link>
       </div>
     </nav>
   );
 }
 
-export default Navbar;
+export default Navbar;

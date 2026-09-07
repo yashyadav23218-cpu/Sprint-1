@@ -3,9 +3,9 @@ function Login() {
   return (
     <>
       <nav className="navbar">
-        <div className="logo">
+        <Link to="/" className="logo">
           AI <span>Mock</span> Interview
-        </div>
+        </Link>
       </nav>
 
       <div className="auth-container">
