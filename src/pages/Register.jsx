@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 function Register() {
+       const [name, setName] = useState("");
+       const [email, setEmail] = useState("");
+       const [password, setPassword] = useState("");
+       const [confirmPassword, setConfirmPassword] = useState("");
   return (
     <>
       <nav className="navbar">
@@ -21,9 +26,11 @@ function Register() {
             <div className="form-group">
               <label>Full Name</label>
 
-              <input
-                type="text"
-                placeholder="Enter your name"
+             <input
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               />
             </div>
 
@@ -31,27 +38,33 @@ function Register() {
               <label>Email Address</label>
 
               <input
-                type="email"
-                placeholder="Example@gmail.com"
-              />
+               type="email"
+               placeholder="Example@gmail.com"
+               value={email}
+               onChange={(e) => setEmail(e.target.value)}
+                />
             </div>
 
             <div className="form-group">
               <label>Password</label>
 
-              <input
-                type="password"
-                placeholder="Create a password"
-              />
+             <input
+              type="password"
+              placeholder="Create a password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+               />
             </div>
 
             <div className="form-group">
               <label>Confirm Password</label>
 
-              <input
+               <input
                 type="password"
                 placeholder="Confirm your password"
-              />
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                />
             </div>
 
             <button
