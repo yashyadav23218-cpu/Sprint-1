@@ -7,10 +7,11 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -29,13 +30,17 @@ function Login() {
       return;
     }
 
-    const res = login(email, password);
+    setLoading(true);
+    const res = await login(email, password);
+    setLoading(false);
+
     if (res.success) {
       navigate("/select-role");
     } else {
       setError(res.message || "Failed to log in.");
     }
   };
+
 
   return (
     <>
@@ -71,8 +76,8 @@ function Login() {
               />
             </div>
 
-            <button type="submit" className="btn-primary" style={{ width: "100%", padding: "12px" }}>
-              Login & Continue 🚀
+            <button type="submit" className="btn-primary" style={{ width: "100%", padding: "12px" }} disabled={loading}>
+              {loading ? "Logging in..." : "Login & Continue 🚀"}
             </button>
           </form>
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ROLES_DATA, DIFFICULTY_CONFIG } from "../data/questionsData";
+import { API_BASE_URL } from "../config/api";
 
 function Interview() {
   const navigate = useNavigate();
@@ -336,6 +337,29 @@ function Interview() {
     });
 
     localStorage.setItem("interviewHistory", JSON.stringify(history));
+
+    // Save to Backend Database if authenticated
+    const token = localStorage.getItem("mock_interview_token");
+    if (token) {
+      fetch(`${API_BASE_URL}/interviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          role: roleConfig.name,
+          difficulty: diffConfig.name,
+          score: normalizedScore,
+          totalQuestions: questions.length,
+          result: resultTag,
+          answers: finalRecords,
+          date: dateStr
+        })
+      }).catch((err) => {
+        console.warn("Could not save interview to backend:", err);
+      });
+    }
 
     // Redirect to feedback page
     navigate("/feedback");

@@ -1,8 +1,10 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { API_BASE_URL } from "../config/api";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const [token, setToken] = useState(() => localStorage.getItem("mock_interview_token") || null);
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem("mock_interview_user");
@@ -12,47 +14,76 @@ export function AuthProvider({ children }) {
     }
   });
 
+  // Keep state in sync with localStorage
   useEffect(() => {
-    if (user) {
+    if (user && token) {
       localStorage.setItem("mock_interview_user", JSON.stringify(user));
-    } else {
+      localStorage.setItem("mock_interview_token", token);
+    } else if (!user) {
       localStorage.removeItem("mock_interview_user");
+      localStorage.removeItem("mock_interview_token");
     }
-  }, [user]);
+  }, [user, token]);
 
-  const login = (email, password) => {
-    // Check registered accounts or allow default login
-    const accounts = JSON.parse(localStorage.getItem("mock_interview_accounts") || "[]");
-    const found = accounts.find((acc) => acc.email.toLowerCase() === email.toLowerCase());
+  const login = async (email, password) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
 
-    const displayName = found ? found.name : email.split("@")[0];
-    const loggedUser = { email, name: displayName, loggedInAt: new Date().toISOString() };
-    setUser(loggedUser);
-    return { success: true, user: loggedUser };
+      if (!res.ok || !data.success) {
+        return { success: false, message: data.message || "Invalid email or password" };
+      }
+
+      setToken(data.token);
+      setUser(data.user);
+      return { success: true, user: data.user };
+    } catch (err) {
+      console.error("Login API error:", err);
+      return {
+        success: false,
+        message: "Could not connect to backend server. Make sure backend is running on port 5000."
+      };
+    }
   };
 
-  const register = (name, email, password) => {
-    const accounts = JSON.parse(localStorage.getItem("mock_interview_accounts") || "[]");
-    const exists = accounts.some((acc) => acc.email.toLowerCase() === email.toLowerCase());
-    if (exists) {
-      return { success: false, message: "An account with this email already exists!" };
+  const register = async (name, email, password) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        return { success: false, message: data.message || "Registration failed" };
+      }
+
+      setToken(data.token);
+      setUser(data.user);
+      return { success: true, user: data.user };
+    } catch (err) {
+      console.error("Register API error:", err);
+      return {
+        success: false,
+        message: "Could not connect to backend server. Make sure backend is running on port 5000."
+      };
     }
-
-    const newAccount = { name, email, password, createdAt: new Date().toISOString() };
-    accounts.push(newAccount);
-    localStorage.setItem("mock_interview_accounts", JSON.stringify(accounts));
-
-    const loggedUser = { email, name, loggedInAt: new Date().toISOString() };
-    setUser(loggedUser);
-    return { success: true, user: loggedUser };
   };
 
   const logout = () => {
+    setToken(null);
     setUser(null);
+    localStorage.removeItem("mock_interview_user");
+    localStorage.removeItem("mock_interview_token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ token, user, login, register, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
@@ -65,3 +96,4 @@ export function useAuth() {
   }
   return context;
 }
+

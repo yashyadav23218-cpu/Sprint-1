@@ -9,11 +9,12 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -37,7 +38,10 @@ function Register() {
       return;
     }
 
-    const res = register(name, email, password);
+    setLoading(true);
+    const res = await register(name, email, password);
+    setLoading(false);
+
     if (res.success) {
       navigate("/select-role");
     } else {
@@ -101,8 +105,8 @@ function Register() {
               />
             </div>
 
-            <button type="submit" className="btn-primary" style={{ width: "100%", padding: "12px" }}>
-              Create Account & Start 🚀
+            <button type="submit" className="btn-primary" style={{ width: "100%", padding: "12px" }} disabled={loading}>
+              {loading ? "Creating Account..." : "Create Account & Start 🚀"}
             </button>
           </form>
 

@@ -29,7 +29,7 @@ function Navbar() {
         {isAuthenticated ? (
           <div className="user-profile-menu">
             <span className="user-badge">
-              👤 {user.name || user.email.split("@")[0]}
+             {user.name || user.email.split("@")[0]}
             </span>
             <button onClick={handleLogout} className="btn-outline btn-sm">
               Logout

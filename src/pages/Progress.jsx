@@ -1,31 +1,94 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { API_BASE_URL } from "../config/api";
 
 function Progress() {
   const [history, setHistory] = useState([]);
   const [filterRole, setFilterRole] = useState("all");
+  const [loading, setLoading] = useState(false);
 
+  // Load history from Backend or localStorage
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("interviewHistory");
-      if (saved) {
-        setHistory(JSON.parse(saved));
+    const fetchHistory = async () => {
+      const token = localStorage.getItem("mock_interview_token");
+      if (token) {
+        setLoading(true);
+        try {
+          const res = await fetch(`${API_BASE_URL}/interviews`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          const data = await res.json();
+          if (data.success && Array.isArray(data.interviews)) {
+            // Map MongoDB interviews
+            const formatted = data.interviews.map((item) => ({
+              id: item._id,
+              date: item.date,
+              role: item.role,
+              difficulty: item.difficulty,
+              score: `${item.score}/10`,
+              numericScore: item.score,
+              result: item.result,
+              totalQuestions: item.totalQuestions
+            }));
+            setHistory(formatted);
+            setLoading(false);
+            return;
+          }
+        } catch (err) {
+          console.warn("Could not fetch from backend, falling back to localStorage", err);
+        }
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error loading interview history", err);
-    }
+
+      // Fallback to localStorage
+      try {
+        const saved = localStorage.getItem("interviewHistory");
+        if (saved) {
+          setHistory(JSON.parse(saved));
+        }
+      } catch (err) {
+        console.error("Error loading interview history", err);
+      }
+    };
+
+    fetchHistory();
   }, []);
 
-  const clearHistory = () => {
+  const clearHistory = async () => {
     if (window.confirm("Are you sure you want to clear your entire interview history?")) {
+      const token = localStorage.getItem("mock_interview_token");
+      if (token) {
+        try {
+          await fetch(`${API_BASE_URL}/interviews`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        } catch (err) {
+          console.warn("Backend clear failed:", err);
+        }
+      }
       localStorage.removeItem("interviewHistory");
       setHistory([]);
     }
   };
 
-  const removeSingleEntry = (indexToRemove) => {
-    const updated = history.filter((_, idx) => idx !== indexToRemove);
+  const removeSingleEntry = async (itemToRemove) => {
+    const token = localStorage.getItem("mock_interview_token");
+    if (token && itemToRemove.id && !itemToRemove.id.startsWith("int_")) {
+      try {
+        await fetch(`${API_BASE_URL}/interviews/${itemToRemove.id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch (err) {
+        console.warn("Backend delete failed:", err);
+      }
+    }
+
+    const updated = history.filter((h) => h.id !== itemToRemove.id);
     setHistory(updated);
     localStorage.setItem("interviewHistory", JSON.stringify(updated));
   };
@@ -188,7 +251,7 @@ function Progress() {
                         <button
                           className="table-del-btn"
                           title="Delete entry"
-                          onClick={() => removeSingleEntry(originalIndex)}
+                          onClick={() => removeSingleEntry(item)}
                         >
                           ✕
                         </button>
